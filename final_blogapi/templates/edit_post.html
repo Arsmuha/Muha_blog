@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать · MuhaBlog{% endblock %}
+{% block content %}
+<form class="card stack" method="post" action="/posts/{{ post.id }}/edit">
+  <h1>Редактировать</h1>
+
+  <label>Заголовок</label>
+  <input name="title" value="{{ post.title }}" minlength="3" maxlength="500" required>
+
+  <label>Текст (Markdown)</label>
+  <textarea name="content" required>{{ post.content }}</textarea>
+
+  <label>Статус</label>
+  <select name="status" class="select">
+    <option value="draft" {% if post.status=='draft' %}selected{% endif %}>Черновик</option>
+    <option value="published" {% if post.status=='published' %}selected{% endif %}>Опубликован</option>
+    <option value="archived" {% if post.status=='archived' %}selected{% endif %}>Архив</option>
+  </select>
+
+  <label>Категории</label>
+  <div class="grid">
+    {% for c in categories %}
+      <label class="check">
+        <input type="checkbox" name="category_ids" value="{{ c.id }}" {% if c.id in current_cats %}checked{% endif %}>
+        <span>{{ c.name }}</span>
+      </label>
+    {% endfor %}
+  </div>
+
+  <div class="card__actions">
+    <button class="btn" type="submit">Сохранить</button>
+    <a class="btn btn--ghost" href="/post/{{ post.id }}">Назад</a>
+  </div>
+</form>
+{% endblock %}

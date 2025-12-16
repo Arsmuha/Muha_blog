@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Профиль · MuhaBlog{% endblock %}
+{% block content %}
+<div class="card stack">
+  <h1>Профиль</h1>
+
+  <div class="row">
+    <div>
+      <div class="muted">Username</div>
+      <div><strong>{{ user.username }}</strong> <span class="badge">{{ user.role }}</span></div>
+      <div class="muted">Email: {{ user.email }}</div>
+    </div>
+    <div>
+      {% if user.avatar_url %}
+        <img class="avatar" src="{{ user.avatar_url }}" alt="avatar">
+      {% else %}
+        <div class="avatar avatar--placeholder">🙂</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <form class="stack" method="post" action="/profile" enctype="multipart/form-data">
+    <label>Bio</label>
+    <textarea name="bio" maxlength="2000">{{ user.bio or '' }}</textarea>
+
+    <label>Avatar (jpg/png)</label>
+    <input type="file" name="avatar" accept="image/*">
+
+    <div class="card__actions">
+      <button class="btn" type="submit">Сохранить</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

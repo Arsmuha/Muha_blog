@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Избранное · MuhaBlog{% endblock %}
+{% block content %}
+<div class="stack">
+  <h1>Избранные посты</h1>
+  {% for item in items %}
+    {% set p = item.post %}
+    <article class="card">
+      <h2 class="card__title"><a href="/post/{{ p.id }}">{{ p.title }}</a></h2>
+      <p class="card__excerpt">{{ p.excerpt }}</p>
+      <div class="card__actions">
+        <a class="btn btn--ghost" href="/post/{{ p.id }}">Открыть</a>
+        <span class="muted">👍 {{ item.counts.likes }} · 👎 {{ item.counts.dislikes }} · ⭐ {{ item.counts.favorites }}</span>
+      </div>
+    </article>
+  {% else %}
+    <div class="muted">Пока пусто.</div>
+  {% endfor %}
+</div>
+{% endblock %}

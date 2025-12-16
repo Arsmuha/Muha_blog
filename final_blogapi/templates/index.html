@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Лента · MuhaBlog{% endblock %}
+
+{% block content %}
+<div class="stack">
+  <form class="searchbar" method="get" action="/">
+    <input name="q" value="{{ q }}" placeholder="Поиск по заголовку и тексту (FTS)" />
+    <select name="category" class="select">
+      <option value="">Все категории</option>
+      {% for c in categories %}
+        <option value="{{ c.slug }}" {% if c.slug == category %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn" type="submit">Искать</button>
+  </form>
+
+  {% if request.state.is_authenticated %}
+  <div class="tabs">
+    <a class="tab {% if not feed %}tab--active{% endif %}" href="/?q={{ q }}&category={{ category }}">Все</a>
+    <a class="tab {% if feed == 'following' %}tab--active{% endif %}" href="/?feed=following">Подписки</a>
+    <a class="tab {% if feed == 'recommended' %}tab--active{% endif %}" href="/?feed=recommended">Рекомендации</a>
+  </div>
+  {% endif %}
+
+  {% for item in items %}
+    {% set p = item.post %}
+    <article class="card">
+      <div class="card__meta">
+        <div class="muted">
+          <strong>{{ item.author.username if item.author else ('user#' ~ p.author_id) }}</strong>
+          · {{ p.created_at.strftime('%Y-%m-%d %H:%M') if p.created_at else '' }}
+          · 👁 {{ p.view_count }}
+        </div>
+        <div class="badges">
+          {% for c in item.categories %}
+            <span class="badge" style="border-color: {{ c.color }}">{{ c.name }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <h2 class="card__title"><a href="/post/{{ p.id }}">{{ p.title }}</a></h2>
+      <p class="card__excerpt">{{ p.excerpt }}</p>
+
+      <div class="card__actions">
+        <a class="btn btn--ghost" href="/post/{{ p.id }}">Открыть</a>
+        <span class="muted">👍 {{ item.counts.likes }} · 👎 {{ item.counts.dislikes }} · ⭐ {{ item.counts.favorites }}</span>
+      </div>
+    </article>
+  {% else %}
+    <div class="muted">Постов пока нет.</div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Создать пост · MuhaBlog{% endblock %}
+{% block content %}
+<form class="card stack" method="post" action="/posts/create">
+  <h1>Создать пост</h1>
+
+  <label>Заголовок</label>
+  <input name="title" minlength="3" maxlength="500" required>
+
+  <label>Текст (Markdown)</label>
+  <textarea name="content" required></textarea>
+
+  <label>Статус</label>
+  <select name="status" class="select">
+    <option value="draft">Черновик</option>
+    <option value="published">Опубликован</option>
+  </select>
+
+  <label>Категории</label>
+  <div class="grid">
+    {% for c in categories %}
+      <label class="check">
+        <input type="checkbox" name="category_ids" value="{{ c.id }}">
+        <span>{{ c.name }}</span>
+      </label>
+    {% endfor %}
+  </div>
+
+  <div class="card__actions">
+    <button class="btn" type="submit">Сохранить</button>
+    <a class="btn btn--ghost" href="/">Отмена</a>
+  </div>
+</form>
+{% endblock %}

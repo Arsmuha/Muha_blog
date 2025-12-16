@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Пользователи · MuhaBlog{% endblock %}
+{% block content %}
+<div class="stack">
+  <form class="searchbar" method="get" action="/users">
+    <input name="q" value="{{ q }}" placeholder="Поиск пользователей (username/email)" />
+    <button class="btn" type="submit">Искать</button>
+  </form>
+
+  {% for u in users %}
+    <div class="card row">
+      <div class="row" style="gap:12px">
+        {% if u.avatar_url %}
+          <img class="avatar" src="{{ u.avatar_url }}" alt="avatar">
+        {% else %}
+          <div class="avatar avatar--placeholder">🙂</div>
+        {% endif %}
+        <div>
+          <div><strong>{{ u.username }}</strong> <span class="badge">{{ u.role }}</span></div>
+          <div class="muted">{{ u.bio or '' }}</div>
+        </div>
+      </div>
+      {% if request.state.is_authenticated and u.id != request.state.user_id|int %}
+        <form method="post" action="/users/{{ u.id }}/follow">
+          <button class="btn {% if u.id in following %}btn--ghost{% else %}btn--primary{% endif %}" type="submit">
+            {% if u.id in following %}Отписаться{% else %}Подписаться{% endif %}
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  {% else %}
+    {% if q %}
+      <div class="muted">Ничего не найдено.</div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

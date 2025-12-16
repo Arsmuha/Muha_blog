@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Админ · MuhaBlog{% endblock %}
+{% block content %}
+<div class="stack">
+  <h1>Админ-дашборд</h1>
+
+  <div class="grid grid--3">
+    <div class="card"><div class="muted">Пользователей</div><div class="kpi">{{ users_total }}</div></div>
+    <div class="card"><div class="muted">Постов всего</div><div class="kpi">{{ posts_total }}</div></div>
+    <div class="card"><div class="muted">Опубликовано</div><div class="kpi">{{ published_total }}</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Регистрации по месяцам</h2>
+    <ul class="list">
+      {% for r in regs %}
+        <li><strong>{{ r.month }}</strong> — {{ r.count }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="muted">Метрики: <a href="/metrics">/metrics</a></div>
+</div>
+{% endblock %}

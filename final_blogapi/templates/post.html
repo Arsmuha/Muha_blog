@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} · MuhaBlog{% endblock %}
+
+{% block content %}
+<article class="card">
+  <div class="card__meta">
+    <div class="muted">
+      <strong>{{ author.username if author else ('user#' ~ post.author_id) }}</strong>
+      · {{ post.created_at.strftime('%Y-%m-%d %H:%M') if post.created_at else '' }}
+      · 👁 {{ post.view_count }}
+    </div>
+    <div class="badges">
+      {% for c in categories %}
+        <span class="badge" style="border-color: {{ c.color }}">{{ c.name }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <h1 class="post__title">{{ post.title }}</h1>
+  <div class="post__content prose">{{ post_html | safe }}</div>
+
+  <div class="post__bar">
+    <div class="muted">👍 {{ counts.likes }} · 👎 {{ counts.dislikes }} · ⭐ {{ counts.favorites }}</div>
+
+    {% if request.state.is_authenticated %}
+    <div class="btnrow">
+      <button class="btn btn--ghost" data-action="like" data-post-id="{{ post.id }}">👍</button>
+      <button class="btn btn--ghost" data-action="dislike" data-post-id="{{ post.id }}">👎</button>
+      <button class="btn {% if favorited %}btn--primary{% else %}btn--ghost{% endif %}" data-action="favorite" data-post-id="{{ post.id }}">⭐</button>
+      {% if request.state.role in ['admin','moderator'] or request.state.user_id|int == post.author_id %}
+        <a class="btn btn--ghost" href="/posts/{{ post.id }}/edit">Редактировать</a>
+        <form method="post" action="/posts/{{ post.id }}/delete" style="display:inline">
+          <button class="btn btn--danger" type="submit">Удалить</button>
+        </form>
+      {% endif %}
+    </div>
+    {% else %}
+      <div class="muted">Чтобы лайкать, комментировать и сохранять — войдите.</div>
+    {% endif %}
+  </div>
+</article>
+
+<section class="stack">
+  <h2>Комментарии</h2>
+
+  {% if request.state.is_authenticated %}
+  <form class="card" id="commentForm" data-post-id="{{ post.id }}">
+    <textarea name="content" placeholder="Ваш комментарий..." required></textarea>
+    <div class="card__actions">
+      <button class="btn" type="submit">Отправить</button>
+      <div class="muted">Отправка через API + обновление в реальном времени (WS)</div>
+    </div>
+  </form>
+  {% endif %}
+
+  <div id="comments">
+    {% for c in comments %}
+      <div class="comment">
+        <div class="muted"><strong>{{ c.author.username if c.author else ('user#' ~ c.author_id) }}</strong> · {{ c.created_at.strftime('%Y-%m-%d %H:%M') if c.created_at else '' }}</div>
+        <div>{{ c.content }}</div>
+      </div>
+    {% else %}
+      <div class="muted">Комментариев пока нет.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

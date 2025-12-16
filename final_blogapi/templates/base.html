@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Blog{% endblock %}</title>
+
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <meta name="theme-color" content="#111827">
+</head>
+<body>
+<header class="topbar">
+  <div class="container topbar__inner">
+    <a class="brand" href="/">MuhaBlog</a>
+
+    <nav class="nav">
+      <a href="/">Лента</a>
+      <a href="/users">Пользователи</a>
+      {% if request.state.is_authenticated %}
+        <a href="/posts/create">Создать пост</a>
+        <a href="/favorites">Избранное</a>
+        <a href="/profile">Профиль</a>
+        {% if request.state.role == 'admin' %}
+          <a href="/admin">Админ</a>
+        {% endif %}
+        <a class="link-danger" href="/logout">Выйти ({{ request.state.username }})</a>
+      {% else %}
+        <a href="/login">Войти</a>
+        <a href="/register">Регистрация</a>
+      {% endif %}
+    </nav>
+
+    <div class="theme">
+      <label for="themeSelect" class="sr-only">Theme</label>
+      <select id="themeSelect" class="select">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  {% if error %}
+    <div class="alert alert--error">{{ error }}</div>
+  {% endif %}
+  {% if info %}
+    <div class="alert alert--info">{{ info }}</div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="muted">© {{ 2025 }} MuhaBlog · <span id="wsStatus" class="muted">WS: offline</span></div>
+  </div>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
